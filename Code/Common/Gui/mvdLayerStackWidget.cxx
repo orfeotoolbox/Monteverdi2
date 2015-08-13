@@ -152,6 +152,14 @@ LayerStackWidget
     this,
     SIGNAL( ApplyButtonClicked() )
   );
+
+  QObject::connect(
+    m_UI->reloadButton,
+    SIGNAL( clicked() ),
+    // to:
+    this,
+    SIGNAL( ReloadButtonClicked() )
+  );
 }
 
 /*******************************************************************************/

@@ -269,6 +269,16 @@ MainWindow
   );
 
   //
+  //
+  QObject::connect(
+    GetController( m_LayerStackDock ),
+    SIGNAL( ReloadLayerRequested() ),
+    // to:
+    this,
+    SLOT( OnReloadLayerRequested() )
+  );
+
+  //
   // OTB application support.
 #if defined( OTB_USE_QT4 ) && USE_OTB_APPS
   //
@@ -1006,7 +1016,7 @@ MainWindow
 /*****************************************************************************/
 void
 MainWindow
-::ImportImage( const QString& filename )
+::ImportImage( const QString & filename, bool isReload )
 {
   // qDebug() << this << "::ImportImage(" << filename << "," << forceCreate << ")";
 
@@ -1051,24 +1061,6 @@ MainWindow
   if( button==QMessageBox::Cancel )
     return;
 
-  /*
-  switch( button )
-    {
-    case QMessageBox::Cancel:
-      return;
-      break;
-
-    case QMessageBox::Ok:
-      // Disable reference-layer combo-box.
-      // Disable layer-stack projection-button.
-      break;
-
-    default:
-      assert( false && "Unhandled QMessageBox::StandardButton value!" );
-      break;
-    }
-  */
-
   //
   // Import image file.
   VectorImageModel * imageModel = ImportImage( filename, -1, -1 );
@@ -1087,20 +1079,42 @@ MainWindow
   bool bypassQuicklookView = quicklookView->SetBypassRenderingEnabled( true );
 
   //
-  // Store image-mode in layer-stack.
-  stackedLayerModel->Add( imageModel );
+  // If reloading, remove previous layer before continuing.
+  StackedLayerModel::SizeType reference = stackedLayerModel->GetReferenceIndex();
+  StackedLayerModel::SizeType current = stackedLayerModel->GetCurrentIndex();
 
+  if( isReload )
+    stackedLayerModel->DeleteCurrent();
+
+  //
+  // Store image-model in layer-stack.
   imageModel->setParent( stackedLayerModel );
+
+  stackedLayerModel->Add(
+    imageModel,
+    isReload
+    ? current
+    : StackedLayerModel::NIL_INDEX );
 
   stackedLayerModel->SetCurrent( imageModel );
 
-  bool hasReference = stackedLayerModel->HasReference();
+  //
+  // Set reference, if needed.
+  bool hasReference = reference!=StackedLayerModel::NIL_INDEX;
 
-  if( !hasReference && srt!=SRT_UNKNOWN )
-    stackedLayerModel->SetReference( imageModel  );
+  if( hasReference )
+    {
+    if( srt==SRT_UNKNOWN )
+      stackedLayerModel->SetReference( StackedLayerModel::NIL_INDEX );
 
-  else if( hasReference && srt==SRT_UNKNOWN )
-    stackedLayerModel->SetReference( StackedLayerModel::NIL_INDEX );
+    else if( stackedLayerModel->GetCurrentIndex()==reference )
+      stackedLayerModel->SetReference( reference, true );
+    }
+  else
+    {
+    if( srt!=SRT_UNKNOWN )
+      stackedLayerModel->SetReference( imageModel  );
+    }
 
   //
   // Activate rendering of image-views.
@@ -1870,7 +1884,7 @@ MainWindow
   // catalog database.
 
   // import the result image into the database
-  ImportImage( outfname );
+  ImportImage( outfname, true );
 }
 
 /*****************************************************************************/
@@ -2087,6 +2101,40 @@ MainWindow
     }
 
   m_StatusBarWidget->SetText( text );
+}
+
+/*****************************************************************************/
+void
+MainWindow
+::OnReloadLayerRequested()
+{
+  //
+  // Get stacked-layer.
+  assert( Application::Instance() );
+  assert(
+    Application::Instance()->GetModel()==
+    Application::Instance()->GetModel< StackedLayerModel >()
+  );
+
+  const StackedLayerModel * stackedLayerModel =
+    Application::Instance()->GetModel< StackedLayerModel >();
+
+  assert( stackedLayerModel!=NULL );
+
+  //
+  // Get current layer.
+  const AbstractLayerModel * layer = stackedLayerModel->GetCurrent();
+  assert( layer!=NULL );
+
+  //
+  // Reload layer depending on dynamic type.
+  if( layer->inherits( VectorImageModel::staticMetaObject.className() ) )
+    {
+    const VectorImageModel * image = qobject_cast< const VectorImageModel * >( layer );
+    assert( layer!=NULL );
+
+    ImportImage( image->GetFilename(), true );
+    }
 }
 
 } // end namespace 'mvd'

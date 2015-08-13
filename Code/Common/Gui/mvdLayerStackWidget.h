@@ -150,6 +150,9 @@ signals:
   /**
    */
   void ApplyButtonClicked();
+  /**
+   */
+  void ReloadButtonClicked();
 
   /*-[ PROTECTED SECTION ]---------------------------------------------------*/
 

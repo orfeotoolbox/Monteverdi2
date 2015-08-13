@@ -38,6 +38,7 @@
 //
 // Monteverdi includes (sorted by alphabetic order)
 #include "Core/mvdStackedLayerModel.h"
+#include "Core/mvdVectorImageModel.h"
 #include "Gui/mvdLayerStackItemModel.h"
 #include "Gui/mvdLayerStackWidget.h"
 
@@ -194,6 +195,14 @@ LayerStackController
     this,
     SIGNAL( ApplyAllRequested() )
   );
+
+  QObject::connect(
+    widget,
+    SIGNAL( ReloadButtonClicked() ),
+    // to:
+    this,
+    SIGNAL( ReloadLayerRequested() )
+  );
 }
 
 /*******************************************************************************/
@@ -294,12 +303,20 @@ LayerStackController
     SLOT( DeleteCurrent() )
   );
 
-  QObject::connect(
+  QObject::disconnect(
     widget,
     SIGNAL( ApplyButtonClicked() ),
-    // to:
+    // from:
     this,
     SIGNAL( ApplyAllRequested() )
+  );
+
+  QObject::disconnect(
+    widget,
+    SIGNAL( ReloadButtonClicked() ),
+    // from:
+    this,
+    SIGNAL( ReloadLayerRequested() )
   );
 }
 

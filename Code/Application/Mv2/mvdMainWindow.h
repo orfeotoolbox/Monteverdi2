@@ -129,7 +129,7 @@ public slots:
 
   /**
    */
-  void ImportImage( const QString & filename );
+  void ImportImage( const QString & filename, bool isReload =false );
 
   /**
    */
@@ -476,6 +476,9 @@ private slots:
    */
   void OnPixelInfoChanged( const QPoint &, const PointType &, const PixelInfo::Vector & );
 
+  /**
+   */
+  void OnReloadLayerRequested();
 };
 
 } // end namespace 'mvd'
@@ -531,7 +534,7 @@ MainWindow
   for( QStringList::const_iterator it( filenames.constBegin() );
        it!=filenames.end();
        ++it )
-    ImportImage( *it );
+    ImportImage( *it, false );
 }
 
 } // end namespace 'mvd'

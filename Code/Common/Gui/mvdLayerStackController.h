@@ -104,6 +104,9 @@ signals:
   /**
    */
   void ApplyAllRequested();
+  /**
+   */
+  void ReloadLayerRequested();
 
   /*-[ PROTECTED SECTION ]---------------------------------------------------*/
 
