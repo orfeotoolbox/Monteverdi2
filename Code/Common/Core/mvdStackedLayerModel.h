@@ -117,7 +117,7 @@ public:
   inline const AbstractLayerModel * operator[]( SizeType ) const;
   inline AbstractLayerModel * operator[]( SizeType );
 
-  KeyType Add( AbstractLayerModel * );
+  KeyType Add( AbstractLayerModel *, SizeType =StackedLayerModel::NIL_INDEX );
 
   inline const AbstractLayerModel * At( SizeType ) const;
   inline AbstractLayerModel * At( SizeType );
@@ -190,6 +190,8 @@ public:
   inline const PixelInfo::Vector & PixelInfos() const;
   inline PixelInfo::Vector & PixelInfos();
 
+  KeyType Replace( SizeType, AbstractLayerModel * );
+
   inline void SetCurrent( SizeType, bool =false );
   void SetCurrent( const KeyType & );
   void SetCurrent( const AbstractLayerModel * );
@@ -229,8 +231,10 @@ signals:
   void CurrentChanged( size_t );
 
   void LayerAboutToBeDeleted( size_t index );
+  void LayerAboutToBeReplaced( size_t index );
   void LayerAdded( size_t index );
   void LayerDeleted( size_t index );
+  void LayerReplaced( size_t index );
 
   void OrderAboutToBeChanged();
   void OrderChanged();

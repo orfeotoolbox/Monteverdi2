@@ -96,7 +96,7 @@ StackedLayerModel
 /*****************************************************************************/
 std::string
 StackedLayerModel
-::Add( AbstractLayerModel * model )
+::Add( AbstractLayerModel * model, SizeType index )
 {
   assert( model!=NULL );
 
@@ -129,9 +129,19 @@ StackedLayerModel
   ClearPixelInfos();
 
   m_LayerModels.insert( LayerModelMap::value_type( key, model ) );
-  m_Keys.push_back( key );
 
-  emit LayerAdded( m_Keys.size() - 1 );
+  if( index<GetCount() )
+    {
+    m_Keys.insert( m_Keys.begin() + index, key );
+    emit LayerAdded( index );
+    }
+
+  else
+    {
+    m_Keys.push_back( key );
+    emit LayerAdded( m_Keys.size() - 1 );
+    }
+
   emit ContentChanged();
 
   return key;
@@ -315,7 +325,7 @@ StackedLayerModel
   emit ContentChanged();
 
   //
-  // Emit about to change current item.
+  // Change current item before deleting.
   if( emitCurrentChanged )
     {
     emit CurrentAboutToBeChanged( current );
@@ -327,12 +337,14 @@ StackedLayerModel
     }
 
   //
-  // Emit about to change reference item.
+  // Change reference item before deleting.
   if( emitReferenceChanged )
     SetReference(
       index>=m_Reference
       ? m_Reference
-      : m_Reference - 1,
+      : ( m_Reference>0
+	  ? m_Reference - 1
+	  : StackedLayerModel::NIL_INDEX ),
       true
     );
 }
@@ -502,6 +514,82 @@ StackedLayerModel
         ? prev
         : m_Reference )
   );
+}
+
+/*****************************************************************************/
+StackedLayerModel::KeyType
+StackedLayerModel
+::Replace( SizeType index, AbstractLayerModel * model )
+{
+  assert( index<m_Keys.size() );
+  assert( model!=NULL );
+
+  //
+  // Check model.
+  if( model==NULL )
+    {
+    throw
+      std::runtime_error(
+        ToStdString(
+          tr( "Cannot insert NULL AbstractLayerModel." )
+        )
+      );
+    }
+
+  //
+  // Generate new key for given model.
+  std::string key( StackedLayerModel::GenerateKey( model ) );
+  assert( !key.empty() );
+
+  if( key.empty() )
+    {
+    throw
+      std::runtime_error(
+        ToStdString(
+          tr( "Failed to generate string key for '%1'." )
+          .arg( model->metaObject()->className() )
+        )
+      );
+    }
+
+
+  emit ContentAboutToBeChanged();
+  {
+  ClearPixelInfos();
+
+  // Find previous model.
+  assert( !m_Keys[ index ].empty() );
+
+  LayerModelMap::iterator it(
+    m_LayerModels.find( m_Keys[ index ] )
+  );
+
+  assert( it!=m_LayerModels.end() );
+
+  emit LayerAboutToBeReplaced( index );
+
+  // Delete previous model if parented.
+  if( it->second->parent()==this )
+    {
+    delete it->second;
+    it->second = NULL;
+    }
+
+  // Remove previous (key, model).
+  m_LayerModels.erase( m_Keys[ index ] );
+
+  // Insert new (key, model).
+  m_LayerModels.insert( LayerModelMap::value_type( key, model ) );
+
+  m_Keys[ index ] = key;
+
+  // Signal replacement.
+  emit LayerReplaced( index );
+  }
+  emit ContentChanged();
+
+  // Return new key.
+  return key;
 }
 
 /*****************************************************************************/
