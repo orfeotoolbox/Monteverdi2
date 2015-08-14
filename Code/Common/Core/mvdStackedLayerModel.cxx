@@ -301,43 +301,30 @@ StackedLayerModel
 
   //
   // Emit signals.
-  if( emitCurrentChanged )
-    emit AboutToChangeSelectedLayerModel( GetKey( current ) );
-
   emit ContentAboutToBeChanged();
   emit LayerAboutToBeDeleted( index );
 
   //
-  // Remove item.
+  // Clear satellite data.
   ClearPixelInfos();
 
-  if( it->second->parent()==this )
-    {
-    delete it->second;
-    it->second = NULL;
-    }
+  //
+  // Remove layer-model.
+  AbstractLayerModel * layer = it->second;
 
   m_LayerModels.erase( it );
 
   m_Keys.erase( m_Keys.begin() + index );
 
-  emit LayerDeleted( index );
-  emit ContentChanged();
+  it = m_LayerModels.end();
 
   //
-  // Change current item before deleting.
+  // Update current pointer.
   if( emitCurrentChanged )
-    {
-    emit CurrentAboutToBeChanged( current );
-
-    m_Current = current;
-
-    emit CurrentChanged( current );
-    emit SelectedLayerModelChanged( GetKey( current ) );
-    }
+    SetCurrent( current, true );
 
   //
-  // Change reference item before deleting.
+  // Update reference pointer.
   if( emitReferenceChanged )
     SetReference(
       index>=m_Reference
@@ -347,6 +334,19 @@ StackedLayerModel
 	  : StackedLayerModel::NIL_INDEX ),
       true
     );
+
+  //
+  // Eventually delete layer.
+  if( layer->parent()==this )
+    {
+    delete layer;
+    layer = NULL;
+    }
+
+  //
+  // Emit signals.
+  emit LayerDeleted( index );
+  emit ContentChanged();
 }
 
 /*******************************************************************************/
