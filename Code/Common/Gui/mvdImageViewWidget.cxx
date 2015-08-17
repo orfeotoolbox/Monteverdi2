@@ -1968,6 +1968,18 @@ ImageViewWidget
   );
   // }
 
+  qDebug() << this << "::OnUpdateProjectionRequired()";
+  {
+  PointType c( m_Manipulator->GetCenter() );
+  SpacingType sp( m_Manipulator->GetSpacing() );
+
+  qDebug() << "C:" << c[ 0 ] << "," << c[ 1 ];
+  qDebug() << "Sp:" << sp[ 0 ] << "," << sp[ 1 ];
+
+
+  qDebug() << "C':" << center[ 0 ] << "," << center[ 1 ];
+  qDebug() << "Sp':" << spacing[ 0 ] << "," << spacing[ 1 ];  
+  }
 
   // Projection WKT and KWL must preferably be set before changing center/spacing
   const AbstractLayerModel * layer = GetLayerStack()->GetReference();

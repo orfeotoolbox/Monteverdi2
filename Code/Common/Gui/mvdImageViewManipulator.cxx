@@ -168,6 +168,8 @@ ImageViewManipulator
 {
   assert( !m_ViewSettings.IsNull() );
 
+  qDebug() << this << "::SetSpacing(" << spacing[ 0 ] << "," << spacing[ 1 ] << ")";
+
   m_ViewSettings->SetSpacing( spacing );
 }
 
@@ -257,6 +259,8 @@ ImageViewManipulator
 ::CenterOn( const PointType& point )
 {
   assert( !m_ViewSettings.IsNull() );
+
+  qDebug() << this << "::CenterOn(" << point[ 0 ] << "," << point[ 1 ] << ")";
 
   m_ViewSettings->Center( point );
 
