@@ -372,6 +372,20 @@ StackedLayerModel
   qDebug() << this << "::Insert(" << model << "," << index << ")";
 
   //
+  // Check given model.
+  assert( model!=NULL );
+
+  if( model==NULL )
+    {
+    throw
+      std::runtime_error(
+        ToStdString(
+          tr( "Cannot insert NULL AbstractLayerModel." )
+        )
+      );
+    }
+
+  //
   // Generate key for new layer.
   std::string key( StackedLayerModel::GenerateKey( model ) );
   assert( !key.empty() );
