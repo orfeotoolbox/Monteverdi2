@@ -98,43 +98,7 @@ StackedLayerModel::KeyType
 StackedLayerModel
 ::Add( AbstractLayerModel * model )
 {
-  assert( model!=NULL );
-
-  if( model==NULL )
-    {
-    throw
-      std::runtime_error(
-        ToStdString(
-          tr( "Cannot insert NULL AbstractLayerModel." )
-        )
-      );
-    }
-
-  std::string key( StackedLayerModel::GenerateKey( model ) );
-  assert( !key.empty() );
-
-  if( key.empty() )
-    {
-    throw
-      std::runtime_error(
-        ToStdString(
-          tr( "Failed to generate string key for '%1'." )
-          .arg( model->metaObject()->className() )
-        )
-      );
-    }
-
-  emit ContentAboutToBeChanged();
-
-  ClearPixelInfos();
-
-  m_LayerModels.insert( LayerModelMap::value_type( key, model ) );
-  m_Keys.push_back( key );
-
-  emit LayerAdded( m_Keys.size() - 1 );
-  emit ContentChanged();
-
-  return key;
+  return Insert( model, StackedLayerModel::NIL_INDEX );
 }
 
 /*****************************************************************************/
