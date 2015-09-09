@@ -94,7 +94,7 @@ StackedLayerModel
 }
 
 /*****************************************************************************/
-std::string
+StackedLayerModel::KeyType
 StackedLayerModel
 ::Add( AbstractLayerModel * model )
 {
@@ -309,7 +309,7 @@ StackedLayerModel
   it = m_LayerModels.end();
 
   //
-  // Update current pointer.
+  // Update pointer to current.
   if( emitCurrentChanged )
     SetCurrent( current, true );
 
@@ -362,6 +362,72 @@ StackedLayerModel
 #endif
 
   return oss.str();
+}
+
+/*****************************************************************************/
+StackedLayerModel::KeyType
+StackedLayerModel
+::Insert( AbstractLayerModel * model, SizeType index )
+{
+  qDebug() << this << "::Insert(" << model << "," << index << ")";
+
+  //
+  // Generate key for new layer.
+  std::string key( StackedLayerModel::GenerateKey( model ) );
+  assert( !key.empty() );
+
+  if( key.empty() )
+    {
+    throw
+      std::runtime_error(
+        ToStdString(
+          tr( "Failed to generate string key for '%1'." )
+          .arg( model->metaObject()->className() )
+        )
+      );
+    }
+
+  //
+  // Clamp index. If out of bounds, insert model at the end of stack.
+  if( index>GetCount() )
+    index = GetCount();
+
+  //
+  // Check if signals have to be emitted.
+  bool emitCurrentChanged = m_Current<GetCount() && index<=m_Current;
+  bool emitReferenceChanged = m_Reference<GetCount() && index<=m_Reference;
+
+  //
+  // Emit signals.
+  emit ContentAboutToBeChanged();
+
+  //
+  // Clear satellite date.
+  ClearPixelInfos();
+
+  //
+  // Insert model.
+  m_LayerModels.insert( LayerModelMap::value_type( key, model ) );
+  m_Keys.insert( m_Keys.begin() + index, key );
+
+  //
+  // Update pointer to current.
+  if( emitCurrentChanged )
+    SetCurrent( m_Current + 1, true );
+
+  //
+  // Update reference pointer.
+  if( emitReferenceChanged )
+    SetReference( m_Reference + 1, true );
+
+  //
+  // Emit signals.
+  emit LayerAdded( index );
+  emit ContentChanged();
+
+  //
+  // Return generated key.
+  return key;
 }
 
 /*****************************************************************************/
