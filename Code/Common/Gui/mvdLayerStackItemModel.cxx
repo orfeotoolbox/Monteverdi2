@@ -895,6 +895,8 @@ void
 LayerStackItemModel
 ::OnLayerAdded( size_t index )
 {
+  // qDebug() << this << "::OnLayerAdded(" << index << ")";
+
   if( !insertRow( index ) )
     {
     assert( false && "QAbstractItemModel::insertRow() failed!" );
