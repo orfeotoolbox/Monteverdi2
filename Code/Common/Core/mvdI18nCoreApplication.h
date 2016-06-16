@@ -315,6 +315,7 @@ public:
     LoadImageModel( const QString & filename,
                     int width,
                     int height,
+		    bool isComplex,
                     QObject * parent =NULL );
 
   /**

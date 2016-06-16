@@ -69,32 +69,36 @@ namespace
 
 /*******************************************************************************/
 ImageImporter
-::ImageImporter( const QString& filename,
+::ImageImporter( const QString & filename,
 		 bool isForceCreateEnabled,
+		 bool isComplex,
 		 int width,
 		 int height,
-		 QObject* parent ) :
+		 QObject * parent ) :
   AbstractWorker( parent ),
   m_Filename( filename ),
   m_ModelType( DATASET ),
   m_Width( width ),
   m_Height( height ),
-  m_IsForceCreateEnabled( isForceCreateEnabled )
+  m_IsForceCreateEnabled( isForceCreateEnabled ),
+  m_IsComplex( isComplex )
 {
 }
 
 /*******************************************************************************/
 ImageImporter
-::ImageImporter( const QString& filename,
+::ImageImporter( const QString & filename,
+		 bool isComplex,
 		 int width,
 		 int height,
-		 QObject* parent ) :
+		 QObject * parent ) :
   AbstractWorker( parent ),
   m_Filename( filename ),
   m_ModelType( IMAGE ),
   m_Width( width ),
   m_Height( height ),
-  m_IsForceCreateEnabled( false )
+  m_IsForceCreateEnabled( false ),
+  m_IsComplex( isComplex )
 {
 }
 
@@ -136,7 +140,7 @@ ImageImporter
     case IMAGE:
       return
         I18nCoreApplication::LoadImageModel(
-          m_Filename, m_Width, m_Height
+          m_Filename, m_Width, m_Height, m_IsComplex
         );
       break;
 

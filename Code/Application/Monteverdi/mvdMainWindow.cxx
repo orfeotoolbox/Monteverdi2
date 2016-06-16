@@ -1001,7 +1001,9 @@ MainWindow
 /*****************************************************************************/
 CountType
 MainWindow
-::ImportImage( const QString& filename, StackedLayerModel::SizeType index )
+::ImportImage( const QString& filename,
+	       StackedLayerModel::SizeType index,
+	       bool isComplex )
 {
   // qDebug() << this << "::ImportImage(" << filename << "," << index << ")";
 
@@ -1041,7 +1043,8 @@ MainWindow
 	count +=
 	  ImportImage(
 	    QString( "%1?&sdataidx=%2" ).arg( filename ).arg( indices[ i ] ),
-	    index + count
+	    index + count,
+	    isComplex
 	  );
 
       return count;
@@ -1125,7 +1128,7 @@ MainWindow
 
   //
   // Import image file.
-  VectorImageModel * imageModel = ImportImage( filename, -1, -1 );
+  VectorImageModel * imageModel = ImportImage( filename, isComplex, -1, -1 );
 
   if( imageModel==NULL )
     return 0;
@@ -1199,7 +1202,7 @@ MainWindow
 /*****************************************************************************/
 void
 MainWindow
-::ImportImages( const QStringList & filenames )
+::ImportImages( const QStringList & filenames, bool isComplex )
 {
   if( filenames.isEmpty() )
     return;
@@ -1208,7 +1211,7 @@ MainWindow
     return;
 
   if( filenames.count()==1 )
-    ImportImage( filenames.front(), 0 );
+    ImportImage( filenames.front(), 0, isComplex );
 
   else
     {
@@ -1218,7 +1221,7 @@ MainWindow
          it!=filenames.end();
 	 ++it )
       {
-        ImportImage( *it, i ++ );
+      ImportImage( *it, i ++, isComplex );
       }
     }
 
@@ -1622,7 +1625,21 @@ MainWindow
   //
   // Select filename.
   ImportImages(
-    I18nMainWindow::GetOpenFileNames( this, tr( "Open file..." ) )
+    I18nMainWindow::GetOpenFileNames( this, tr( "Open file(s)..." ) ),
+    false
+  );
+}
+
+/*****************************************************************************/
+void
+MainWindow
+::on_action_OpenComplexImage_triggered()
+{
+  //
+  // Select filename.
+  ImportImages(
+    I18nMainWindow::GetOpenFileNames( this, tr( "Open file(s)..." ) ),
+    true
   );
 }
 
@@ -2169,7 +2186,7 @@ MainWindow
   // catalog database.
 
   // import the result image into the database
-  ImportImage( outfname, false );
+  ImportImage( outfname, 0, false );
 }
 
 /*****************************************************************************/

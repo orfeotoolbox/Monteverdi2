@@ -282,6 +282,7 @@ protected:
    */
   VectorImageModel *
     ImportImage( const QString & filename,
+		 bool isComplex,
                  int width,
                  int height );
 

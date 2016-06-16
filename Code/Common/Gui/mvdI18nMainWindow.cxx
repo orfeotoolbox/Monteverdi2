@@ -184,7 +184,8 @@ I18nMainWindow
 /*****************************************************************************/
 VectorImageModel *
 I18nMainWindow
-::ImportImage( const QString& filename,
+::ImportImage( const QString & filename,
+	       bool isComplex,
                int width,
                int height )
 {
@@ -195,6 +196,7 @@ I18nMainWindow
         // It will be auto-deleted by background-task.
         new ImageImporter(
           filename,
+	  isComplex,
           width, height
         )
       ),

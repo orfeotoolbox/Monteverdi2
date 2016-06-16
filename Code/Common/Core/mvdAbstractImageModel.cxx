@@ -224,6 +224,24 @@ AbstractImageModel
   // Return joined band-name list.
   return qBandNames1;
 }
+/*******************************************************************************/
+QStringList &
+AbstractImageModel
+::AppendComplexBandNames( QStringList & bands ) const
+{
+  ImageBaseType::ConstPointer output( ToImageBase() );
+
+  for( unsigned int i = 0;
+       i < output->GetNumberOfComponentsPerPixel(); 
+       ++ i )
+    bands.append(
+      i % 2 == 0
+      ? tr( "Modulus( %1, %2 )" ).arg( i ).arg( i + 1 )
+      : tr( "Phasis( %1, %2 )" ).arg( i - 1 ).arg( i )
+    );
+
+  return bands;
+}
 
 /*******************************************************************************/
 void

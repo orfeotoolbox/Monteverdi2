@@ -140,11 +140,12 @@ public slots:
   /**
    */
   CountType ImportImage( const QString & filename,
-			 StackedLayerModel::SizeType index );
+			 StackedLayerModel::SizeType index,
+			 bool isComplex );
 
   /**
    */
-  void ImportImages( const QStringList & filenames );
+  void ImportImages( const QStringList & filenames, bool isComplex = false );
 
   /*-[ SIGNALS SECTION ]-----------------------------------------------------*/
 
@@ -442,6 +443,10 @@ private slots:
    * image' menu action is triggered.
    */
   void on_action_OpenImage_triggered();
+
+  /**
+   */
+  void on_action_OpenComplexImage_triggered();
 
   /**
    * \brief Qt auto-connected slot which is called when

@@ -97,9 +97,10 @@ public:
    */
   ImageImporter( const QString& filename,
 		 bool isForceCreateEnabled,
+		 bool isComplex,
 		 int width =-1,
 		 int height =-1,
-		 QObject* parent =NULL );
+		 QObject * parent =NULL );
 
   /**
    * \brief Constructor (image-model).
@@ -110,9 +111,10 @@ public:
    * \param isForceCreateEnabled true to force creation of dataset.
    */
   ImageImporter( const QString& filename,
+		 bool isComplex,
 		 int width =-1,
 		 int height =-1,
-		 QObject* parent =NULL );
+		 QObject * parent =NULL );
 
   /**
    * \brief Destructor.
@@ -196,6 +198,7 @@ private:
   /**
    */
   bool m_IsForceCreateEnabled: 1;
+  bool m_IsComplex: 1;
 
   /*-[ PRIVATE SLOTS SECTION ]-----------------------------------------------*/
 

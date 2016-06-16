@@ -31,6 +31,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_OpenImage"/>
+    <addaction name="action_OpenComplexImage"/>
     <addaction name="action_LoadOTBApplications"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
@@ -270,6 +271,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="action_OpenComplexImage">
+   <property name="text">
+    <string>Open &amp;complex image(s)...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open complex image file(s)</string>
    </property>
   </action>
  </widget>

@@ -110,18 +110,20 @@ public:
       m_Histogram(),
       m_Settings( NULL ),
       m_Properties( NULL ),
+      m_IsComplex( false ),
       m_IsBeingStored( false )
     {
     }
 
     /** \brief Constructor (importing image). */
-    BuildContext( const QString& filename ) :
+    BuildContext( const QString& filename, bool isComplex =false ) :
       m_Id( -1 ),
       m_Filename( filename ),
       m_Quicklook(),
       m_Histogram(),
       m_Settings( NULL ),
       m_Properties( NULL ),
+      m_IsComplex( isComplex ),
       m_IsBeingStored( true )
     {
       assert( !filename.isEmpty() );
@@ -136,6 +138,7 @@ public:
       m_Histogram(),
       m_Settings( settings ),
       m_Properties( properties ),
+      m_IsComplex( false ),
       m_IsBeingStored( false )
     {
     }
@@ -156,6 +159,7 @@ public:
     QString m_Histogram;
     void * const m_Settings;
     ImageProperties * const m_Properties;
+    bool m_IsComplex : 1;
 
   private:
     bool m_IsBeingStored;
@@ -240,6 +244,10 @@ public:
   /**
    */
   QStringList GetBandNames( bool enhanced =false ) const;
+
+  /**
+   */
+  QStringList & AppendComplexBandNames( QStringList & bands ) const;
 
   /**
    * Get the number of available LOD.

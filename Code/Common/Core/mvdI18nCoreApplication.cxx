@@ -200,6 +200,7 @@ I18nCoreApplication
 ::LoadImageModel( const QString & filename,
                   int width,
                   int height,
+		  bool isComplex,
                   QObject * parent )
 {
   try
@@ -215,7 +216,7 @@ I18nCoreApplication
 
   try
     {
-    AbstractImageModel::BuildContext context( filename );
+    AbstractImageModel::BuildContext context( filename, isComplex );
 
     imageModel = new VectorImageModel( parent );
 
