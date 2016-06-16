@@ -87,14 +87,16 @@ endif()
 find_package(OTB REQUIRED
   COMPONENTS
   OTBApplicationEngine
-  OTBQtWidget
-  OTBImageIO
-  OTBVectorDataIO
-  OTBTestKernel
   OTBCarto
+  OTBIce
+  OTBImageIO
+  OTBMathParserX
   OTBProjection
+  OTBQtWidget
   OTBStatistics
-  OTBIce)
+  OTBTestKernel
+  OTBVectorDataIO
+  )
 
 if(OTB_FOUND)
   include(${OTB_USE_FILE})

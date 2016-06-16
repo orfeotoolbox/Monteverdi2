@@ -36,6 +36,7 @@
 
 //
 // System includes (sorted by alphabetic order)
+#include <sstream>
 
 //
 // ITK includes (sorted by alphabetic order)
@@ -47,6 +48,9 @@
 // OTB includes (sorted by alphabetic order)
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829  //tag=QT4-boost-compatibility
 #include "otbObjectList.h"
+#endif //tag=QT4-boost-compatibility
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829  //tag=QT4-boost-compatibility
+#  include "otbBandMathXImageFilter.h"
 #endif //tag=QT4-boost-compatibility
 
 //
@@ -486,6 +490,7 @@ HistogramModel
 ::template_BuildModel_M( BuildContext * )
 {
   QTime lMain;
+  QTime lPass0;
   QTime lPass1;
   QTime lPass2;
 
@@ -510,14 +515,96 @@ HistogramModel
   ImageProperties * imageProperties = parentImageModel->GetProperties();
   assert( imageProperties!=NULL );
 
+#if USE_FULL_IMAGE_FOR_PASS_1
+  TImageModel * imageModel = parentImageModel;
+
+#else // USE_FULL_IMAGE_FOR_PASS_1
   TImageModel * imageModel = parentImageModel->GetQuicklookModel();
+
+#endif  // USE_FULL_IMAGE_FOR_PASS_1
 
   if( imageModel==NULL )
     imageModel = qobject_cast< TImageModel * >( parentImageModel );
 
   assert( imageModel!=NULL );
 
-  CountType components = imageModel->ToImage()->GetNumberOfComponentsPerPixel();
+  //
+  // Get image-base
+  typename TImageModel::SourceImageType::Pointer image(
+#if USE_FULL_IMAGE_FOR_PASS_1
+    parentImageModel->ToImage()
+#else // USE_FULL_IMAGE_FOR_PASS_1
+    imageModel->ToImage()
+#endif // USE_FULL_IMAGE_FOR_PASS_1
+  );
+  assert( !image.IsNull() );
+
+  //
+  // Foo
+  if( imageModel->GetSettings().IsComplex() )
+  {
+  qDebug() << tr( "%1: Pre-processing - SAR modulus/phasis (M)..." )
+    .arg( QDateTime::currentDateTime().toString( Qt::ISODate ) );
+
+  lPass0.start();
+
+  CountType components = image->GetNumberOfComponentsPerPixel();
+
+  assert( components>0 );
+  assert( components % 2 == 0 );
+
+  typedef
+    otb::BandMathXImageFilter< typename TImageModel::SourceImageType >
+    BandMathXImageFilter;
+
+  typename BandMathXImageFilter::Pointer bmxFilter( BandMathXImageFilter::New() );
+
+  bmxFilter->SetNthInput( 0, imageModel->ToImage().GetPointer() );
+
+  std::ostringstream oss1;
+  std::ostringstream oss2;
+
+  oss1 << "{ ";
+
+  for( CountType i=0; i<components / 2; ++i )
+    {
+    if( i>0 )
+      {
+      oss1 << ", ";
+      oss2 << ", ";
+      }
+    
+    CountType b1 = 2 * i + 1;
+    CountType b2 = b1 + 1;
+
+    oss1 << "im1b" << b1 << ", im1b" << b2;
+
+    oss2 << "sqrt( im1b" << b1 << " * im1b" << b1 << " + im1b" << b2 << " * im1b" << b2 << " ), ";
+#if 0
+    oss2 << "( ( im1b" << b1 << "==0 ) ? pi/2 : vatan( { im1b" << b2 << " / im1b" << b1 << " } ) )";
+#else
+    oss2 << "vatan( { im1b" << b2 << " / im1b" << b1 << " } )";
+#endif
+    }
+
+  oss1 << ", " << oss2.str() << " }";
+
+  qDebug() << "BandMathX processing:" << ToQString( oss1.str().c_str() );
+
+  bmxFilter->SetExpression( oss1.str() );
+
+  bmxFilter->Update();
+
+  image = bmxFilter->GetOutput( 0 );
+
+  qDebug() << QString( "%1: Pre-processing - done (%2 ms)." )
+    .arg( QDateTime::currentDateTime().toString( Qt::ISODate ) )
+    .arg( lPass0.elapsed() );
+  }
+
+  //
+  // Get number of components. 
+  CountType components = image->GetNumberOfComponentsPerPixel();
   assert( components>0 );
 
   //
@@ -554,13 +641,7 @@ HistogramModel
 
     typename StatisticsFilter::Pointer filterStats( StatisticsFilter::New() );
 
-#if USE_FULL_IMAGE_FOR_PASS_1
-    filterStats->SetInput( parentImageModel->ToImage() );
-
-#else // USE_FULL_IMAGE_FOR_PASS_1
-    filterStats->SetInput( imageModel->ToImage() );
-
-#endif // USE_FULL_IMAGE_FOR_PASS_1
+    filterStats->SetInput( image );
 
     filterStats->SetEnableMinMax( true );
     filterStats->SetIgnoreUserDefinedValue( imageProperties->IsNoDataEnabled() );
@@ -649,7 +730,7 @@ HistogramModel
 
     typename HistogramFilter::Pointer histogramFilter( HistogramFilter::New()  );
 
-    histogramFilter->SetInput( imageModel->ToImage() );
+    histogramFilter->SetInput( image );
 
     // Setup histogram filter.
     histogramFilter->GetFilter()->SetHistogramMin( m_MinPixel );
