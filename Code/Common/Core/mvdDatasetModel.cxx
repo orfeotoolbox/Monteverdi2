@@ -237,7 +237,7 @@ DatasetModel
 /*****************************************************************************/
 AbstractImageModel*
 DatasetModel
-::LoadImage( AbstractImageModel::BuildContext& context,
+::LoadImage( AbstractImageModel::BuildContext & context,
 	     int width,
 	     int height )
 {
