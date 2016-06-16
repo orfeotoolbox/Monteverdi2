@@ -103,6 +103,8 @@ namespace mvd
 
 #define REFERENCE_LAYER_COMBOBOX_NAME "referenceLayerComboBox"
 
+#define FORCE_NO_GLSL ( ( defined( _DEBUG ) && 0 ) || 0 )
+
 /*****************************************************************************/
 /* STATIC IMPLEMENTATION SECTION                                             */
 
@@ -181,6 +183,21 @@ MainWindow
 
   bool isGLSL = m_ImageView->GetRenderer()->CheckGLCapabilities( &m_GLSL140 );
 
+#if FORCE_NO_GLSL
+  m_ImageView->GetRenderer()->SetGLSLEnabled( false );
+
+  isGLSL = false;
+#endif // FORCE_NO_GLSL
+
+  // MANTIS-1204
+  // {
+  //
+  // Forward GLSL state to quicklook view.
+  assert( GetQuicklookView()!=NULL );
+  assert( GetQuicklookView()->GetRenderer()!=NULL );
+
+  GetQuicklookView()->GetRenderer()->SetGLSLEnabled( isGLSL );
+  // }
 
   assert( m_ShaderWidget!=NULL );
 
@@ -584,7 +601,7 @@ MainWindow
 
   // get the PixelDescription widget
   // TODO: Make a widget controller!
-  PixelDescriptionWidget * pixelDescriptionWidget = 
+  PixelDescriptionWidget * pixelDescriptionWidget =
     qobject_cast< PixelDescriptionWidget * >(
       m_PixelDescriptionDock->findChild< PixelDescriptionWidget * >()
     );
@@ -609,11 +626,11 @@ MainWindow
 
   QObject::connect(
     vectorImageModel,
-    SIGNAL( CurrentPixelValueUpdated(const VectorImageType::PixelType &, 
+    SIGNAL( CurrentPixelValueUpdated(const VectorImageType::PixelType &,
                                      const QStringList & ) ),
     // to:
     pixelDescriptionWidget,
-    SLOT( OnCurrentPixelValueUpdated(const VectorImageType::PixelType &, 
+    SLOT( OnCurrentPixelValueUpdated(const VectorImageType::PixelType &,
                                      const QStringList & ) )
   );
 }
@@ -687,7 +704,7 @@ MainWindow
 
   // get the PixelDescription widget
   // TODO: Make a widget controller!
-  PixelDescriptionWidget * pixelDescriptionWidget = 
+  PixelDescriptionWidget * pixelDescriptionWidget =
     qobject_cast< PixelDescriptionWidget * >(
       m_PixelDescriptionDock->findChild< PixelDescriptionWidget * >()
     );
@@ -990,6 +1007,7 @@ MainWindow
   );
 
   quicklookView->SetPickingEnabled( false );
+  quicklookView->SetPickingDefaultStatus( false );
 
   quicklookView->setMinimumSize(  64,  64 );
   quicklookView->setMaximumSize( 512, 512 );
@@ -1335,7 +1353,7 @@ MainWindow
 {
   assert( Application::Instance() );
 
-  Application::Instance()->SetModel( new StackedLayerModel() ); 
+  Application::Instance()->SetModel( new StackedLayerModel() );
 }
 
 /*****************************************************************************/
@@ -2086,8 +2104,6 @@ MainWindow
 
   assert( appWidget!=NULL );
 
-  appWidget->setWindowTitle( docName );
-
   appWidget->show();
 
 #endif // USE_TABBED_VIEW
@@ -2158,7 +2174,7 @@ MainWindow
       tr( "Warning!" ),
       tr( "Tab cannot be closed while OTB application is running." )
     );
-   
+
     return;
     }
 
@@ -2220,7 +2236,7 @@ MainWindow
   assert( I18nCoreApplication::Instance()->GetModel()==
           I18nCoreApplication::Instance()->GetModel< StackedLayerModel >() );
 
-  StackedLayerModel * model = 
+  StackedLayerModel * model =
     I18nCoreApplication::Instance()->GetModel< StackedLayerModel >();
 
   // assert( model!=NULL );
@@ -2261,7 +2277,7 @@ MainWindow
   assert( I18nCoreApplication::Instance()->GetModel()==
           I18nCoreApplication::Instance()->GetModel< StackedLayerModel >() );
 
-  StackedLayerModel * model = 
+  StackedLayerModel * model =
     I18nCoreApplication::Instance()->GetModel< StackedLayerModel >();
 
   assert( model!=NULL );

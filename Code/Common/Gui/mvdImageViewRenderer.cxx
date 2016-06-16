@@ -198,13 +198,13 @@ ImageViewRenderer
     }
 
   //
+  // Set GLSL effects state.
+  SetGLSLEnabled( isOk );
+
+  //
   // Return if check has succeeded.
   if( isOk )
     return true;
-
-  //
-  // Disable GLSL effects.
-  m_EffectsEnabled = false;
 
   //
   // Construct message.
@@ -765,6 +765,8 @@ ImageViewRenderer
           imageSettings->SetMaxBlue( settings.GetHighIntensity(RGBW_CHANNEL_BLUE ) );
           }
 
+	// qDebug() << this << " gamma: " << settings.GetGamma();
+
         imageSettings->SetGamma( settings.GetGamma() );
 
         if( properties==NULL )
@@ -791,6 +793,10 @@ ImageViewRenderer
 
 	if( !fragmentShader.IsNull() )
 	  {
+	  // If this point is reached, shader is not null which means
+	  // that isGLSLEnabled() is true.
+	  assert( IsGLSLEnabled() );
+
 	  otb::StandardShader::Pointer shader(
 	    otb::DynamicCast< otb::StandardShader >( fragmentShader )
 	  );
@@ -946,7 +952,7 @@ ImageViewRenderer
 	  //   << "\tQString:" << vectorImageModel->GetFilename()
 	  //   << "\tstd::string" << QFile::encodeName( vectorImageModel->GetFilename() );
 
-	  if( m_EffectsEnabled )
+	  if( IsGLSLEnabled() )
 	    {
 	    // qDebug() << "Created shader for" << FromStdString( it->first );
 
@@ -1212,7 +1218,6 @@ ImageViewRenderer
 	imageSettings->SetCurrentGreen( it->m_Pixel[ 1 ] );
 	imageSettings->SetCurrentBlue( it->m_Pixel[ 2 ] );
 	}
-      }
 
       //
       // Get shader.
@@ -1249,6 +1254,7 @@ ImageViewRenderer
 	    ]
 	  );
 	}
+      }
     }
 }
 
