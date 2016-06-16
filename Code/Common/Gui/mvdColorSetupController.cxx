@@ -270,8 +270,13 @@ ColorSetupController
     //...but force call to valueChanged() slot to force refresh.
   bool widgetSignalsBlocked = colorSetupWidget->blockSignals( true );
   {
+  QStringList bands( imageModel->GetBandNames( true ) );
+
+  if( imageModel->GetSettings().IsComplex() )
+    imageModel->AppendComplexBandNames( bands );
+
   // Reset list of component names.
-  colorSetupWidget->SetComponents( imageModel->GetBandNames( true ) );
+  colorSetupWidget->SetComponents( bands );
 
   //
   // RGB-mode.
@@ -301,7 +306,10 @@ ColorSetupController
     );
 
     // Allow user-selectable grayscale-mode.
-    colorSetupWidget->SetGrayscaleEnabled( imageModel->GetNbComponents()>1 );
+    colorSetupWidget->SetGrayscaleEnabled(
+      imageModel->GetNbComponents()>1 &&
+      !imageModel->GetSettings().IsComplex()
+    );
 
     // Set current-index of white (gray).
     colorSetupWidget->SetCurrentGrayIndex(
