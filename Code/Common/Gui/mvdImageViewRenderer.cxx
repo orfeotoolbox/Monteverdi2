@@ -658,20 +658,89 @@ ImageViewRenderer
 	// Apply visibility.
         imageActor->SetVisible( vectorImageModel->IsVisible() );
 
+	//
+	// Initialize pixel-type
+	otb::ImageSettings::PixelType pixelType =
+	  otb::ImageSettings::PIXEL_TYPE_INTENSITY;
+
         //
         // Apply color-setup.
+	{
         VectorImageSettings::ChannelVector channels;
+
+	CountType components = vectorImageModel->GetNbComponents();
+
+	assert( components>0 );
 
         settings.GetSmartChannels( channels );
 
-        imageActor->SetRedIdx( channels[ RGBW_CHANNEL_RED ] + 1 );
-        imageActor->SetGreenIdx( channels[ RGBW_CHANNEL_GREEN ] + 1 );
-        imageActor->SetBlueIdx( channels[ RGBW_CHANNEL_BLUE ] + 1 );
+	if( settings.IsComplex() )
+	  {
+	  assert( components % 2 == 0 );
+
+	  assert(
+	    channels[ RGBW_CHANNEL_RED ]==channels[ RGBW_CHANNEL_GREEN ] &&
+	    channels[ RGBW_CHANNEL_RED ]==channels[ RGBW_CHANNEL_BLUE ]
+	  );
+
+	  // for( VectorImageSettings::ChannelVector::iterator it(
+	  // 	 channels.begin() );
+	  //      it!=channels.end();
+	  //      ++ it )
+	  //   if( *it >= components )
+	  //     {
+	  //     pixelType =
+	  // 	*it % 2 == 0
+	  // 	? otb::ImageSettings::PIXEL_TYPE_MODULUS
+	  // 	: otb::ImageSettings::PIXEL_TYPE_PHASIS;
+
+	  //     qDebug() << "Band" << *it << "->" << ( *it - components ) / 2;
+
+	  //     *it = ( *it - components ) / 2;
+	  //     }
+
+	  if( channels[ 0 ] >= components )
+	    {
+	    if( channels[ 0 ] % 2 == 0 )
+	      {
+	      pixelType = otb::ImageSettings::PIXEL_TYPE_MODULUS;
+
+	      channels[ RGBW_CHANNEL_RED ] =
+		channels[ RGBW_CHANNEL_RED ] - components;
+
+	      channels[ RGBW_CHANNEL_GREEN ] =
+		channels[ RGBW_CHANNEL_GREEN ] - components + 1;
+	      }
+	    else
+	      {
+	      pixelType = otb::ImageSettings::PIXEL_TYPE_PHASIS;
+
+	      channels[ RGBW_CHANNEL_RED ] =
+		channels[ RGBW_CHANNEL_RED ] - components - 1;
+
+	      channels[ RGBW_CHANNEL_GREEN ] =
+		channels[ RGBW_CHANNEL_GREEN ] - components;
+	      }
+
+	    channels[ RGBW_CHANNEL_BLUE ] = channels[ RGBW_CHANNEL_RED ];
+
+	    // qDebug()
+	    //   << "real =" << channels[ RGBW_CHANNEL_RED ]
+	    //   << "imgy =" << channels[ RGBW_CHANNEL_GREEN ];
+	    }
+	  }
+
+	imageActor->SetRedIdx( channels[ RGBW_CHANNEL_RED ] + 1 );
+	imageActor->SetGreenIdx( channels[ RGBW_CHANNEL_GREEN ] + 1 );
+	imageActor->SetBlueIdx( channels[ RGBW_CHANNEL_BLUE ] + 1 );
+	}
 
         //
         // Apply color-dynamics.
 	otb::ImageSettings::Pointer imageSettings( imageActor->GetImageSettings() );
 	assert( !imageSettings.IsNull() );
+
+	imageSettings->SetPixelType( pixelType );
 
         if( settings.IsGrayscaleActivated() )
           {
