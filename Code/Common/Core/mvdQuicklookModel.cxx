@@ -99,7 +99,7 @@ QuicklookModel
 /*******************************************************************************/
 void
 QuicklookModel
-::virtual_BuildModel( void* context )
+::virtual_BuildModel( void * context )
 {
   //
   // Get build-context.
@@ -110,10 +110,15 @@ QuicklookModel
   // Access rendering settings.
 
   // TODO: Remove temporary hack (Quicklook rendering settings).
-  if( buildContext->m_Settings!=NULL )
+  if( buildContext->m_Settings==NULL )
+    GetSettings().SetComplex( buildContext->m_IsComplex );
+
+  else
     {
     VectorImageSettings * const settings =
       static_cast< VectorImageSettings * const >( buildContext->m_Settings );
+
+    assert( settings->IsComplex()==buildContext->m_IsComplex );
 
     SetSettings( *settings );
     }

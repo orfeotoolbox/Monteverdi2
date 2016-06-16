@@ -257,7 +257,7 @@ protected:
   //
   // AbstractImageModel overrides.
 
-  void InitializeColorSetupSettings();
+  void InitializeColorSetupSettings( bool isComplex );
 
   void InitializeColorDynamicsSettings();
 

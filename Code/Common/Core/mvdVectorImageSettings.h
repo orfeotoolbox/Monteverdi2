@@ -159,7 +159,7 @@ public:
    * \return the channels band-index vector taking the
    * grayscale-mode activation state flag into account.
    */
-  inline void GetSmartChannels( ChannelVector& channels ) const;
+  void GetSmartChannels( ChannelVector & channels ) const;
 
   //
   // COLOR DYNAMICS.
@@ -249,6 +249,13 @@ public:
    */
   inline double GetGamma() const;
 
+  /**
+   */
+  bool IsComplex() const;
+
+  /**
+   */
+  void SetComplex( bool isEnabled );
 
   /*-[ PROTECTED SECTION ]---------------------------------------------------*/
 
@@ -266,6 +273,10 @@ protected:
 // Private methods.
 private:
 
+  /**
+   */
+  static ChannelVector::value_type RealChannel( ChannelVector::value_type );
+ 
   /**
    */
   inline
@@ -305,11 +316,6 @@ private:
   ParametersType m_RgbDynamicsParams;
 
   /**
-   * \brief Grayscale-mode activation state.
-   */
-  bool m_IsGrayscaleActivated;
-
-  /**
    * \brief Grayscale-mode band-index.
    */
   ChannelVector::value_type m_GrayChannel;
@@ -323,6 +329,15 @@ private:
   /**
    */
   double m_Gamma;
+
+  /**
+   * \brief Grayscale-mode activation state.
+   */
+  bool m_IsGrayscaleActivated : 1;
+
+  /**
+   */
+  int m_IsComplex : 1;
 };
 
 } // end namespace 'mvd'.
@@ -398,23 +413,6 @@ VectorImageSettings
 ::GetRgbChannels() const
 {
   return m_RgbChannels;
-}
-
-/*****************************************************************************/
-inline
-void
-VectorImageSettings
-::GetSmartChannels( VectorImageSettings::ChannelVector& channels ) const
-{
-  if( IsGrayscaleActivated() )
-    {
-    channels.resize( m_RgbChannels.size() );
-    std::fill( channels.begin(), channels.end(), m_GrayChannel );
-    }
-  else
-    {
-    channels = m_RgbChannels;
-    }
 }
 
 /*****************************************************************************/
@@ -537,7 +535,7 @@ bool
 VectorImageSettings
 ::IsGrayscaleActivated() const
 {
-  return m_IsGrayscaleActivated;
+  return m_IsGrayscaleActivated || m_IsComplex;
 }
 
 /*****************************************************************************/

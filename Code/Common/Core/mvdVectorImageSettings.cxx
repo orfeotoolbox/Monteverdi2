@@ -59,20 +59,17 @@ namespace
 } // end of anonymous namespace.
 
 /*****************************************************************************/
-/* STATIC IMPLEMENTATION SECTION                                             */
-
-
-/*****************************************************************************/
 /* CLASS IMPLEMENTATION SECTION                                              */
 /*****************************************************************************/
 VectorImageSettings
 ::VectorImageSettings() :
   m_RgbChannels(),
   m_RgbDynamicsParams( 6 ),
-  m_IsGrayscaleActivated( false ),
   m_GrayChannel( 0 ),
   m_GrayDynamicsParams( 6 ),
-  m_Gamma( 1.0 )
+  m_Gamma( 1.0 ),
+  m_IsGrayscaleActivated( false ),
+  m_IsComplex( false )
 {
   m_RgbDynamicsParams.Fill( 0 );
   m_GrayDynamicsParams.Fill( 0 );
@@ -83,10 +80,11 @@ VectorImageSettings
 ::VectorImageSettings( const VectorImageSettings & other ) :
   m_RgbChannels( other.m_RgbChannels ),
   m_RgbDynamicsParams( other.m_RgbDynamicsParams ),
-  m_IsGrayscaleActivated( other.m_IsGrayscaleActivated ),
   m_GrayChannel( other.m_GrayChannel ),
   m_GrayDynamicsParams( 6 ),
-  m_Gamma( other.m_Gamma )
+  m_Gamma( other.m_Gamma ),
+  m_IsGrayscaleActivated( other.m_IsGrayscaleActivated ),
+  m_IsComplex( other.m_IsComplex )
 {
 }
 
@@ -287,6 +285,37 @@ VectorImageSettings
       );
       break;
     }
+}
+
+/*****************************************************************************/
+void
+VectorImageSettings
+::GetSmartChannels( VectorImageSettings::ChannelVector & channels ) const
+{
+  if( IsGrayscaleActivated() )
+    {
+    channels.resize( m_RgbChannels.size() );
+
+    std::fill( channels.begin(), channels.end(), m_GrayChannel );
+    }
+  else
+    channels = m_RgbChannels;
+}
+
+/*****************************************************************************/
+bool
+VectorImageSettings
+::IsComplex() const
+{
+  return m_IsComplex;
+}
+
+/*****************************************************************************/
+void
+VectorImageSettings
+::SetComplex( bool isEnabled )
+{
+  m_IsComplex = isEnabled;
 }
 
 } // end namespace 'mvd'
