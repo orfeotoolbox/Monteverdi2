@@ -189,6 +189,8 @@ MainWindow
   isGLSL = false;
 #endif // FORCE_NO_GLSL
 
+  m_UI->action_OpenSarImage->setEnabled( isGLSL );
+
   // MANTIS-1204
   // {
   //
