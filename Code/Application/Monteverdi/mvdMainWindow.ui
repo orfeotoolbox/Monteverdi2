@@ -275,7 +275,7 @@
   </action>
   <action name="action_OpenComplexImage">
    <property name="text">
-    <string>Open &amp;complex image(s)...</string>
+    <string>Open &amp;SAR image(s)...</string>
    </property>
    <property name="toolTip">
     <string>Open complex image file(s)</string>
