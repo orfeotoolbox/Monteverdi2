@@ -446,7 +446,7 @@ private slots:
 
   /**
    */
-  void on_action_OpenComplexImage_triggered();
+  void on_action_OpenSarImage_triggered();
 
   /**
    * \brief Qt auto-connected slot which is called when

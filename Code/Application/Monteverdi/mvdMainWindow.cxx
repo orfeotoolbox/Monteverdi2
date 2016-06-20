@@ -1651,7 +1651,7 @@ MainWindow
 /*****************************************************************************/
 void
 MainWindow
-::on_action_OpenComplexImage_triggered()
+::on_action_OpenSarImage_triggered()
 {
   //
   // Select filename.

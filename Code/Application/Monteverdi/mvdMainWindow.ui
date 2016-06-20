@@ -31,7 +31,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_OpenImage"/>
-    <addaction name="action_OpenComplexImage"/>
+    <addaction name="action_OpenSarImage"/>
     <addaction name="action_LoadOTBApplications"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
@@ -84,6 +84,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_OpenImage"/>
+   <addaction name="action_OpenSarImage"/>
   </widget>
   <widget class="QToolBar" name="m_RenderToolBar">
    <property name="windowTitle">
@@ -273,7 +274,11 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="action_OpenComplexImage">
+  <action name="action_OpenSarImage">
+   <property name="icon">
+    <iconset resource="mvdMainWindow.qrc">
+     <normaloff>:/icons/action_SARImage_Icon</normaloff>:/icons/action_SARImage_Icon</iconset>
+   </property>
    <property name="text">
     <string>Open &amp;SAR image(s)...</string>
    </property>

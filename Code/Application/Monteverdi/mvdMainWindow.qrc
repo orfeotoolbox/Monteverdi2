@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/icons">
+    <file alias="action_SARImage_Icon">../../../Data/Icons/document-open_SAR_32x32.png</file>
     <file alias="action_SaveScreenshot_Icon">../../../Data/Icons/image-export_24x24.png</file>
     <file alias="action_LayerDeleteAll_Icon">../../../Data/Icons/layers-remove_24x24.png</file>
     <file alias="action_Reload_Icon">../../../Data/Icons/reload_24x24.png</file>
