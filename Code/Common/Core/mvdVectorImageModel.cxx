@@ -448,33 +448,19 @@ VectorImageModel
     VectorImageSettings::ChannelVector::value_type band =
       GetSettings().GetRgbwChannel( channel );
 
-    if( GetSettings().IsComplex() && band>=GetNbComponents() )
-      {
-      /*
-      typedef
-	std::numeric_limits< ParametersType::ValueType >
-	NumericLimits;
+    GetSettings().SetLowIntensity(
+      channel,
+      !histogramModel->IsValid()
+      ? min[ band ]
+      : histogramModel->Quantile( band , 0.02, BOUND_LOWER )
+    );
 
-      GetSettings().SetLowIntensity( -NumericLimits::infinity() );
-      GetSettings().SetHighIntensity( +NumericLimits::infinity() );
-      */
-      }
-    else
-      {
-      GetSettings().SetLowIntensity(
-	channel,
-	!histogramModel->IsValid()
-	? min[ band ]
-	: histogramModel->Quantile( band , 0.02, BOUND_LOWER )
-      );
-
-      GetSettings().SetHighIntensity(
-	channel,
-	!histogramModel->IsValid()
-	? max[ band ]
-	: histogramModel->Quantile( band , 0.02, BOUND_UPPER )
-      );
-      }
+    GetSettings().SetHighIntensity(
+      channel,
+      !histogramModel->IsValid()
+      ? max[ band ]
+      : histogramModel->Quantile( band , 0.02, BOUND_UPPER )
+    );
     }
 }
 
