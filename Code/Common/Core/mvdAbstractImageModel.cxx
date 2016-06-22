@@ -236,8 +236,8 @@ AbstractImageModel
        ++ i )
     bands.append(
       i % 2 == 0
-      ? tr( "Modulus( %1, %2 )" ).arg( i ).arg( i + 1 )
-      : tr( "Phasis( %1, %2 )" ).arg( i - 1 ).arg( i )
+      ? tr( "Modulus (%1, %2)" ).arg( i ).arg( i + 1 )
+      : tr( "Phase (%1, %2)" ).arg( i - 1 ).arg( i )
     );
 
   return bands;
