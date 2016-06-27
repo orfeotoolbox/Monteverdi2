@@ -661,7 +661,7 @@ ImageViewRenderer
 	//
 	// Initialize pixel-type
 	otb::ImageSettings::PixelType pixelType =
-	  otb::ImageSettings::PIXEL_TYPE_INTENSITY;
+	  otb::ImageSettings::PIXEL_TYPE_OPTICAL;
 
         //
         // Apply color-setup.
@@ -682,22 +682,6 @@ ImageViewRenderer
 	    channels[ RGBW_CHANNEL_RED ]==channels[ RGBW_CHANNEL_GREEN ] &&
 	    channels[ RGBW_CHANNEL_RED ]==channels[ RGBW_CHANNEL_BLUE ]
 	  );
-
-	  // for( VectorImageSettings::ChannelVector::iterator it(
-	  // 	 channels.begin() );
-	  //      it!=channels.end();
-	  //      ++ it )
-	  //   if( *it >= components )
-	  //     {
-	  //     pixelType =
-	  // 	*it % 2 == 0
-	  // 	? otb::ImageSettings::PIXEL_TYPE_MODULUS
-	  // 	: otb::ImageSettings::PIXEL_TYPE_PHASIS;
-
-	  //     qDebug() << "Band" << *it << "->" << ( *it - components ) / 2;
-
-	  //     *it = ( *it - components ) / 2;
-	  //     }
 
 	  if( channels[ 0 ] >= components )
 	    {
