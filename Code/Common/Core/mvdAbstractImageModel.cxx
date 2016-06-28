@@ -231,14 +231,17 @@ AbstractImageModel
 {
   ImageBaseType::ConstPointer output( ToImageBase() );
 
+  assert( output->GetNumberOfComponentsPerPixel() % 2 == 0 );
+
   for( unsigned int i = 0;
        i < output->GetNumberOfComponentsPerPixel(); 
-       ++ i )
-    bands.append(
-      i % 2 == 0
-      ? tr( "Modulus (%1, %2)" ).arg( i ).arg( i + 1 )
-      : tr( "Phase (%1, %2)" ).arg( i - 1 ).arg( i )
-    );
+       i += 2 )
+    {
+    bands.append( tr( "Modulus (%1, %2)" ).arg( i ).arg( i + 1 ) );
+    bands.append( tr( "Phase (%1, %2)" ).arg( i ).arg( i + 1 ) );
+    bands.append( tr( "Amplitude dB (%1, %2)" ).arg( i ).arg( i + 1 ) );
+    bands.append( tr( "Intensity dB (%1, %2)" ).arg( i ).arg( i + 1 ) );
+    }
 
   return bands;
 }

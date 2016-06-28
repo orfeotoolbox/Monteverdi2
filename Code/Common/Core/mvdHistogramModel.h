@@ -580,11 +580,16 @@ HistogramModel
     oss1 << "im1b" << b1 << ", im1b" << b2;
 
     oss2 << "sqrt( im1b" << b1 << " * im1b" << b1 << " + im1b" << b2 << " * im1b" << b2 << " ), ";
+
 #if 0
-    oss2 << "( ( im1b" << b1 << "==0 ) ? pi/2 : vatan( { im1b" << b2 << " / im1b" << b1 << " } ) )";
+    oss2 << "( ( im1b" << b1 << "==0 ) ? pi/2 : vatan( { im1b" << b2 << " / im1b" << b1 << " } ) ), ";
 #else
-    oss2 << "vatan( { im1b" << b2 << " / im1b" << b1 << " } )";
+    oss2 << "vatan( { im1b" << b2 << " / im1b" << b1 << " } ), ";
 #endif
+
+    oss2 << "10 * log10( sqrt( im1b" << b1 << " * im1b" << b1 << " + im1b" << b2 << " * im1b" << b2 << " ) ), ";
+
+    oss2 << "10 * log10( im1b" << b1 << " * im1b" << b1 << " + im1b" << b2 << " * im1b" << b2 << " )";
     }
 
   oss1 << ", " << oss2.str() << " }";

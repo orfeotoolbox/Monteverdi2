@@ -685,32 +685,18 @@ ImageViewRenderer
 
 	  if( channels[ 0 ] >= components )
 	    {
-	    if( channels[ 0 ] % 2 == 0 )
-	      {
-	      pixelType = otb::ImageSettings::PIXEL_TYPE_MODULUS;
+	    CountType c = channels[ 0 ] - components;
 
-	      channels[ RGBW_CHANNEL_RED ] =
-		channels[ RGBW_CHANNEL_RED ] - components;
-
-	      channels[ RGBW_CHANNEL_GREEN ] =
-		channels[ RGBW_CHANNEL_GREEN ] - components + 1;
-	      }
-	    else
-	      {
-	      pixelType = otb::ImageSettings::PIXEL_TYPE_PHASIS;
-
-	      channels[ RGBW_CHANNEL_RED ] =
-		channels[ RGBW_CHANNEL_RED ] - components - 1;
-
-	      channels[ RGBW_CHANNEL_GREEN ] =
-		channels[ RGBW_CHANNEL_GREEN ] - components;
-	      }
-
+	    channels[ RGBW_CHANNEL_RED ] = 2 * ( c / 4 );
+	    channels[ RGBW_CHANNEL_GREEN ] = channels[ RGBW_CHANNEL_RED ] + 1;
 	    channels[ RGBW_CHANNEL_BLUE ] = channels[ RGBW_CHANNEL_RED ];
 
-	    // qDebug()
-	    //   << "real =" << channels[ RGBW_CHANNEL_RED ]
-	    //   << "imgy =" << channels[ RGBW_CHANNEL_GREEN ];
+	    pixelType = otb::ImageSettings::PixelType( ( c % 4 ) + 1 );
+
+	    qDebug()
+	      << "type =" << pixelType
+	      << "real =" << channels[ RGBW_CHANNEL_RED ]
+	      << "imgy =" << channels[ RGBW_CHANNEL_GREEN ];
 	    }
 	  }
 
