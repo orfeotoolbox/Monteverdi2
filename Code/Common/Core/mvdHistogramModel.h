@@ -594,7 +594,7 @@ HistogramModel
 
   oss1 << ", " << oss2.str() << " }";
 
-  qDebug() << "BandMathX processing:" << ToQString( oss1.str().c_str() );
+  // qDebug() << "BandMathX processing:" << ToQString( oss1.str().c_str() );
 
   bmxFilter->SetExpression( oss1.str() );
 
@@ -602,9 +602,9 @@ HistogramModel
 
   image = bmxFilter->GetOutput( 0 );
 
-  // qDebug() << QString( "%1: Pre-processing - done (%2 ms)." )
-  //   .arg( QDateTime::currentDateTime().toString( Qt::ISODate ) )
-  //   .arg( lPass0.elapsed() );
+  qDebug() << QString( "%1: Pre-processing - done (%2 ms)." )
+    .arg( QDateTime::currentDateTime().toString( Qt::ISODate ) )
+    .arg( lPass0.elapsed() );
   }
 
   //
