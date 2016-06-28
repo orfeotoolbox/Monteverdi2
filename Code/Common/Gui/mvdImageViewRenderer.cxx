@@ -693,10 +693,10 @@ ImageViewRenderer
 
 	    pixelType = otb::ImageSettings::PixelType( ( c % 4 ) + 1 );
 
-	    qDebug()
-	      << "type =" << pixelType
-	      << "real =" << channels[ RGBW_CHANNEL_RED ]
-	      << "imgy =" << channels[ RGBW_CHANNEL_GREEN ];
+	    // qDebug()
+	    //   << "type =" << pixelType
+	    //   << "real =" << channels[ RGBW_CHANNEL_RED ]
+	    //   << "imgy =" << channels[ RGBW_CHANNEL_GREEN ];
 	    }
 	  }
 
